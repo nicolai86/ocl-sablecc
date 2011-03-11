@@ -26,7 +26,8 @@ Helpers
  cr = 13;
  lf = 10;
  digit = ['0'..'9'];
- digit_with_dot = digit | ',';
+ number_seperator = '.';
+ number_fraction = number_seperator digit+;
  lowercase = ['a'..'z'];
  uppercase = ['A'..'Z'];
  letter = lowercase | uppercase;
@@ -98,7 +99,7 @@ Tokens
  
   // literals
   boolean_literal = 'true' | 'false';
-  number_literal = digit digit_with_dot*;
+  number_literal = digit+ number_fraction?;
   string_literal = ''' (idletter_with_digit_or_space)* ''';
  
   // identifier
