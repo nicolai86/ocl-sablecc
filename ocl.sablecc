@@ -1,0 +1,376 @@
+/* 
+ * OCL 2.0 compliant grammar for SableCC 3.2
+ *
+ * Copyright (C) 2004 Fadi Chabarek 
+ * Copyright (C) 2010, 2011 Raphael Randschau
+ * 
+ * This library is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU Lesser General Public 
+ * License as published by the Free Software Foundation; either 
+ * version 2.1 of the License, or (at your option) any later version. 
+ * 
+ * This library is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * Lesser General Public License for more details. 
+ * 
+ * You should have received a copy of the GNU Lesser General Public 
+ * License along with this library; if not, write to the Free Software 
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ */
+Package ocl;
+
+Helpers
+
+ tab = 9;
+ cr = 13;
+ lf = 10;
+ digit = ['0'..'9'];
+ digit_with_dot = digit | ',';
+ lowercase = ['a'..'z'];
+ uppercase = ['A'..'Z'];
+ letter = lowercase | uppercase;
+ idletter = letter | '_';
+ idletter_or_digit = letter | digit;
+ idletter_with_digit_or_space = idletter_or_digit | ' ';
+
+Tokens
+
+  // separators
+  eol     = cr | lf | cr lf;
+  blank   = ' ' | tab;
+  dot = '.';
+  arrow = '->';
+  colon = ':';
+  dcolon = '::';
+  l_par = '(';
+  r_par = ')';
+  l_bracket = '[';
+  r_bracket = ']';
+  l_brace = '{';
+  r_brace = '}';
+  semicolon = ';';
+  comma = ',';
+  at = '@';
+  bar = '|';
+  ddot = '..';
+ 
+  // operators
+  not = 'not';
+  mult = '*';
+  div = '/';
+  plus = '+';
+  minus = '-';
+  equal = '=';
+  n_equal = '<>';
+  lt = '<';
+  gt = '>';
+  lteq = '<=';
+  gteq = '>=';
+  and = 'and';
+  or = 'or';
+  xor = 'xor';
+  implies = 'implies';
+ 
+  // keywords
+  context = 'context';
+  package = 'package';
+  endpackage = 'endpackage';
+  k_set = 'Set';
+  k_ordered_set = 'OrderedSet';
+  bag = 'Bag';
+  sequence = 'Sequence';
+  collection = 'Collection';
+  k_null = 'null';
+  k_if = 'if';
+  k_then = 'then';
+  k_else = 'else';
+  k_endif = 'endif';
+  let = 'let';
+  in = 'in';
+  k_pre = 'pre';
+  k_post = 'post';
+  k_inv = 'inv';
+  k_def = 'def';
+  k_init = 'init';
+  k_body = 'body';
+  k_derive = 'derive';
+ 
+  // literals
+  boolean_literal = 'true' | 'false';
+  number_literal = digit digit_with_dot*;
+  string_literal = ''' (idletter_with_digit_or_space)* ''';
+ 
+  // identifier
+  id      = idletter_or_digit+;
+
+Ignored Tokens
+
+  blank,
+  eol;
+
+Productions
+
+  ocl_file =
+    ocl_package+;
+   
+  ocl_package =
+    package path_name_cs context_decl* endpackage;
+   
+  context_decl =
+    {init_derive} [context]:attr_assoc_cs
+    |
+    {inv_def} [context]:classifier_cs
+    |
+    {pre_post_body} [context]:operation_cs;
+   
+  attr_assoc_cs =
+    context [context_name]:path_name_cs colon type_cs init_derive_cs+;
+ 
+  classifier_cs =
+    context [context_name]:path_name_cs inv_def_cs+;
+   
+  operation_cs =
+    context [context_name]:path_name_cs property_call_parameters? return_type? pre_post_body_cs+;
+     
+  pre_post_body_cs =
+    {pre_condition} k_pre colon [pre]:ocl_expression
+    |
+    {post_condition} k_post colon [post]:ocl_expression
+    |
+    {body_condition} k_body colon [body]:ocl_expression;
+   
+  init_derive_cs =
+    {initial} k_init colon [init]:ocl_expression
+    |
+    {derive} k_derive colon [derive]:ocl_expression;
+   
+  inv_def_cs = 
+    {constraint} k_inv simple_name? colon [invariant]:ocl_expression
+    |
+    {definition} k_def simple_name? colon def_expression;
+   
+  return_type =
+    colon type_cs;
+   
+  classifier_type =
+    colon simple_name;
+   
+  context_operation_name =
+    simple_name |
+    {logical}	logical_operator |
+    {relational} relational_operator |
+    {add} add_operator |
+    {multiply} multiply_operator;
+ 
+  param_list =
+    formal_parameter next_param*;
+   
+  formal_parameter =
+    simple_name type_postfix;
+   
+  next_param =
+    comma formal_parameter;
+   
+  property_call =
+    path_name_cs is_marked_pre? qualifiers? [parameters]:property_call_parameters?;
+   
+  property_call_parameters =
+    l_par declarator? [parameters]:actual_parameter_list? r_par;
+   
+  actual_parameter_list =
+    expression next_expr*;
+   
+  next_expr =
+    comma expression;
+   
+  literal_collection =
+    collection_kind l_brace collection_item_list r_brace;
+   
+  collection_item_list =
+    collection_item next_collection_item*;
+   
+  next_collection_item =
+    comma collection_item;
+   
+  collection_item =
+    expression range?;
+   
+  range =
+    ddot expression;
+   
+  declarator =
+    {concrete} actual_parameter_list simple_type_postfix? accumulator? bar;
+   
+  accumulator =
+    semicolon simple_name colon type_cs equal expression;
+   
+  name_list =
+    simple_name next_name*;
+ 
+  next_name =
+    comma simple_name;
+ 
+  simple_type_postfix =
+    colon path_name_cs;
+ 
+  qualifiers =
+    l_bracket actual_parameter_list r_bracket;
+   
+  ocl_expression =
+    expression;
+   
+  def_expression =
+    {variable} variable_decl_cs equal ocl_expression |
+    {operation} property_call equal ocl_expression;
+ 
+  variable_decl_cs =
+    simple_name return_type?;
+ 
+  type_postfix =
+    colon type_cs;
+ 
+  if_expression =
+    k_if [condition]:expression k_then [then_branch]:expression k_else [else_branch]:expression k_endif;
+ 
+  expression =
+    logical_expression;
+   
+  logical_expression =
+    boolean_expression implication*;
+ 
+  implication =
+    implies_operator boolean_expression;
+   
+  boolean_expression =
+    relational_expression boolean_operation*;
+   
+  boolean_operation =
+    boolean_operator relational_expression;
+   
+  relational_expression =
+    compareable_expression equation?;
+   
+  equation =
+    [operator]:equation_operator compareable_expression;
+   
+  compareable_expression =
+    additive_expression comparison?;
+   
+  comparison =
+    [operator]:compare_operator additive_expression;
+   
+  additive_expression =
+    multiplicative_expression addition*;
+   
+  addition =
+    [operator]:add_operator multiplicative_expression;
+   
+  multiplicative_expression =
+    unary_expression multiplication*;
+   
+  multiplication =
+    [operator]:multiply_operator unary_expression;
+   
+  unary_expression =
+    {prefixed} [operator]:unary_operator [expression]:postfix_expression 
+    |
+    [expression]:postfix_expression;
+
+  postfix_expression =
+    primary_expression property_invocation*;
+
+  primary_expression =
+    {collection} literal_collection
+    |
+    {literal} literal
+    |
+    {property_call} property_call
+    |
+    {parenthesed} l_par expression r_par
+    |
+    {if} if_expression;
+   
+  property_invocation =
+    {object} dot property_call
+    |
+    {collection} arrow property_call;
+ 
+  is_marked_pre = at k_pre;
+
+  logical_operator =
+    boolean_operator |
+    {implicative} implies_operator;
+   
+  boolean_operator =
+    {and} and |
+    {or} or |
+    {xor} xor;
+   
+  implies_operator = implies;
+ 
+  relational_operator =
+    {equality} equation_operator |
+    {compare}	compare_operator;
+ 
+  equation_operator =
+    equal |
+    {in} n_equal;
+   
+  compare_operator =
+    {gt} gt |
+    {lt} lt |
+    {gteq} gteq |
+    {lteq} lteq;
+ 
+  add_operator =
+    {plus} plus |
+    {minus} minus;
+   
+  multiply_operator =
+    {mult} mult |
+    {div}	div;
+   
+  unary_operator =
+    {minus}	minus |
+    {not}	not;
+
+  type_cs =
+    {ocl_any}	path_name_cs |	
+    {collection} collection_type;
+   
+  collection_type =
+    collection_kind l_par path_name_cs r_par;
+   
+  collection_kind =
+    {set}	k_set
+    |
+    {ordered_set} k_ordered_set
+    |
+    {bag}	bag
+    |
+    {sequence} sequence
+    |
+    collection;
+   
+  literal =
+    {string} string_literal
+    |
+    {number} number_literal
+    |
+    {boolean}	boolean_literal
+    |
+    {null} k_null;
+  
+  path_name_cs =
+    simple_name path_name?;
+ 
+  path_name =
+    dcolon path_name_cs;
+ 
+  name_qualifier =
+    simple_name dcolon;
+ 
+  simple_name =
+    id;
+  
