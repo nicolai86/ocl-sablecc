@@ -157,10 +157,14 @@ Productions
     colon simple_name;
    
   context_operation_name =
-    simple_name |
-    {logical}	logical_operator |
-    {relational} relational_operator |
-    {add} add_operator |
+    simple_name 
+    |
+    {logical} logical_operator 
+    |
+    {relational} relational_operator 
+    |
+    {add} add_operator 
+    |
     {multiply} multiply_operator;
  
   param_list =
@@ -221,7 +225,8 @@ Productions
     expression;
    
   def_expression =
-    {variable} variable_decl_cs equal ocl_expression |
+    {variable} variable_decl_cs equal ocl_expression 
+    |
     {operation} property_call equal ocl_expression;
  
   variable_decl_cs =
@@ -299,7 +304,8 @@ Productions
   is_marked_pre = at k_pre;
 
   logical_operator =
-    boolean_operator |
+    boolean_operator 
+    |
     {implicative} implies_operator;
    
   boolean_operator =
@@ -310,44 +316,53 @@ Productions
   implies_operator = implies;
  
   relational_operator =
-    {equality} equation_operator |
-    {compare}	compare_operator;
+    {equality} equation_operator 
+    |
+    {compare} compare_operator;
  
   equation_operator =
-    equal |
+    equal 
+    |
     {in} n_equal;
    
   compare_operator =
-    {gt} gt |
-    {lt} lt |
-    {gteq} gteq |
+    {gt} gt 
+    |
+    {lt} lt 
+    |
+    {gteq} gteq 
+    |
     {lteq} lteq;
  
   add_operator =
-    {plus} plus |
+    {plus} plus 
+    |
     {minus} minus;
    
   multiply_operator =
-    {mult} mult |
-    {div}	div;
+    {mult} mult 
+    |
+    {div} div;
    
   unary_operator =
-    {minus}	minus |
-    {not}	not;
+    {minus} minus 
+    |
+    {not} not;
 
   type_cs =
-    {ocl_any}	path_name_cs |	
+    {ocl_any} path_name_cs 
+    |
     {collection} collection_type;
    
   collection_type =
     collection_kind l_par path_name_cs r_par;
    
   collection_kind =
-    {set}	k_set
+    {set} k_set
     |
     {ordered_set} k_ordered_set
     |
-    {bag}	bag
+    {bag} bag
     |
     {sequence} sequence
     |
@@ -358,7 +373,7 @@ Productions
     |
     {number} number_literal
     |
-    {boolean}	boolean_literal
+    {boolean} boolean_literal
     |
     {null} k_null;
   
