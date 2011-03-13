@@ -223,7 +223,19 @@ Productions
     l_bracket actual_parameter_list r_bracket;
    
   ocl_expression =
-    expression;
+    [let]:let_declaration? expression;
+  
+  let_declaration = 
+    let_expression* in;
+  
+  let_expression = 
+    let simple_name let_parameter_list? type_postfix? equal expression;
+  
+  let_parameter_list = 
+    l_par formal_parameter_list r_par;
+    
+  formal_parameter_list = 
+      param_list?;
    
   def_expression =
     {variable} variable_decl_cs equal ocl_expression 
@@ -336,9 +348,9 @@ Productions
     {lteq} lteq;
  
   add_operator =
-    {plus} plus 
+    {plus} [sign]:plus 
     |
-    {minus} minus;
+    {minus} [sign]:minus;
    
   multiply_operator =
     {mult} mult 
