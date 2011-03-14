@@ -380,22 +380,28 @@ Productions
     |
     {sequence} k_sequence
     |
-    {tuple} k_tuple
-    |
     k_collection;
+    
+  tuple_type = 
+    k_tuple l_brace property_call_parameters r_brace;
+   
+  prim_literal =
+    {number} number_literal
+    |
+    {string} string_literal
+    |
+    {boolean} boolean_literal
+    |
+    {null} k_null;
    
   literal =
     {enumeration} enum_literal
     |
-    {string} string_literal
-    |
-    {number} number_literal
-    |
-    {boolean} boolean_literal
-    |
     {collection} collection_type
     |
-    {null} k_null;
+    {tuple} tuple_type
+    |
+    {primitive} prim_literal;
     
   enum_literal =
     simple_name path_name;
