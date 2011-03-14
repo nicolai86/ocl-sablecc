@@ -191,7 +191,7 @@ Productions
     comma expression;
    
   literal_collection =
-    collection_kind l_brace collection_item_list r_brace;
+    collection_kind l_brace collection_item_list? r_brace;
    
   collection_item_list =
     collection_item next_collection_item*;
