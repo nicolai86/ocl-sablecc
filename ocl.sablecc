@@ -79,9 +79,10 @@ Tokens
   endpackage = 'endpackage';
   k_set = 'Set';
   k_ordered_set = 'OrderedSet';
-  bag = 'Bag';
-  sequence = 'Sequence';
-  collection = 'Collection';
+  k_bag = 'Bag';
+  k_sequence = 'Sequence';
+  k_collection = 'Collection';
+  k_tuple = 'Tuple';
   k_null = 'null';
   k_if = 'if';
   k_then = 'then';
@@ -178,7 +179,7 @@ Productions
     comma formal_parameter;
    
   property_call =
-    path_name_cs is_marked_pre? qualifiers? [parameters]:property_call_parameters?;
+    simple_name is_marked_pre? qualifiers? [parameters]:property_call_parameters?;
    
   property_call_parameters =
     l_par declarator? [parameters]:actual_parameter_list? r_par;
@@ -375,29 +376,35 @@ Productions
     |
     {ordered_set} k_ordered_set
     |
-    {bag} bag
+    {bag} k_bag
     |
-    {sequence} sequence
+    {sequence} k_sequence
     |
-    collection;
+    {tuple} k_tuple
+    |
+    k_collection;
    
   literal =
+    {enumeration} enum_literal
+    |
     {string} string_literal
     |
     {number} number_literal
     |
     {boolean} boolean_literal
     |
+    {collection} collection_type
+    |
     {null} k_null;
+    
+  enum_literal =
+    simple_name path_name;
   
   path_name_cs =
     simple_name path_name?;
  
   path_name =
     dcolon path_name_cs;
- 
-  name_qualifier =
-    simple_name dcolon;
  
   simple_name =
     id;
