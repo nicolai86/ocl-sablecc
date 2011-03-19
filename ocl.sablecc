@@ -203,7 +203,7 @@ Productions
     expression range?;
    
   range =
-    ddot expression;
+    colon expression;
    
   declarator =
     {concrete} actual_parameter_list simple_type_postfix? accumulator? bar;
@@ -227,10 +227,15 @@ Productions
     [let]:let_declaration? expression;
   
   let_declaration = 
-    let_expression* in;
+    let let_expression in;
   
-  let_expression = 
-    let simple_name let_parameter_list? type_postfix? equal expression;
+  let_expression =
+    {one} [let]:let_sub_expression
+    |
+    {many} [let]:let_sub_expression comma let_expression;
+  
+  let_sub_expression = 
+    simple_name let_parameter_list? type_postfix? equal [expr]:expression;
   
   let_parameter_list = 
     l_par formal_parameter_list r_par;
