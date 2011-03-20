@@ -224,18 +224,30 @@ Productions
     l_bracket actual_parameter_list r_bracket;
    
   ocl_expression =
-    [let]:let_declaration? expression;
+    [let]:let_exp_cs? expression;
   
-  let_declaration = 
-    k_let let_expression k_in;
+  // 9.3.35
+  let_exp_cs = 
+    k_let variable_declaration_cs let_exp_sub_cs;
   
-  let_expression =
-    {one} [let]:let_sub_expression
+  // 9.3.36
+  let_exp_sub_cs = 
+    {let_expr} comma variable_declaration_cs let_exp_sub_cs
     |
-    {many} [let]:let_sub_expression comma let_expression;
-  
-  let_sub_expression = 
-    simple_name_cs let_parameter_list? type_postfix? equal [expr]:expression;
+    k_in;
+    
+  // 9.3.27
+  variable_declaration_list_cs =
+    {one} variable_declaration_cs
+    |
+    {many} variable_declaration_cs comma variable_declaration_list_cs;
+    
+  // 9.3.23
+  variable_declaration_cs =
+    simple_name_cs type_postfix? variable_declaration_equation?;
+    
+  variable_declaration_equation =
+    equal expression;
   
   let_parameter_list = 
     l_par formal_parameter_list r_par;
@@ -387,7 +399,7 @@ Productions
     |
     k_collection;
     
-  tuple_type = 
+  tuple_literal_exp_cs = 
     k_tuple l_brace property_call_parameters r_brace;
    
   primitive_literal_exp_cs =
@@ -404,7 +416,7 @@ Productions
     |
     {coll} collection_literal_exp_cs
     |
-    {tuple} tuple_type
+    tuple_literal_exp_cs
     |
     {primitive} primitive_literal_exp_cs;
     
