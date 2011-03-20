@@ -181,9 +181,6 @@ Productions
   next_expr =
     comma expression;
    
-  literal_collection =
-    collection_type_identifier_cs l_brace collection_item_list? r_brace;
-   
   collection_item_list =
     collection_item next_collection_item*;
    
@@ -302,7 +299,7 @@ Productions
     primary_expression property_invocation*;
 
   primary_expression =
-    {collection} literal_collection
+    {collection} collection_literal_exp_cs
     |
     {literal} literal_exp_cs
     |
@@ -402,15 +399,15 @@ Productions
     [collection_part]:collection_literal_part_cs next_collection_literal_part_cs?;
     
   next_collection_literal_part_cs =
-    comma [collection_part]:collection_literal_part_cs;
+    comma collection_literal_parts_cs;
     
   // 9.3.11
   collection_literal_part_cs = 
-    {range} collection_range_cs
-    |
+    // collection_range_cs        // see 9.3.12
+    // |
     expression;
   
-  // 9.3.12  
+  // 9.3.12  - not used due to recursion errors
   collection_range_cs =
     [l_expr]:expression comma [r_expr]:expression;
   
@@ -432,8 +429,8 @@ Productions
     {enumeration} enum_literal
     |
     {coll} collection_literal_exp_cs
-    |
-    tuple_literal_exp_cs
+    //|
+    //tuple_literal_exp_cs
     |
     {primitive} primitive_literal_exp_cs;
     
