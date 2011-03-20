@@ -371,9 +371,9 @@ Productions
   type_cs =
     {ocl_any} path_name_cs 
     |
-    {collection} collection_type;
+    {collection} [collection]:collection_literal_exp_cs;
    
-  collection_type =
+  collection_literal_exp_cs =
     collection_kind l_par path_name_cs r_par;
    
   collection_kind =
@@ -390,7 +390,7 @@ Productions
   tuple_type = 
     k_tuple l_brace property_call_parameters r_brace;
    
-  primitive_literal_cs =
+  primitive_literal_exp_cs =
     {number} number_literal
     |
     {string} string_literal
@@ -402,11 +402,11 @@ Productions
   literal_exp_cs =
     {enumeration} enum_literal
     |
-    {collection} collection_type
+    {coll} collection_literal_exp_cs
     |
     {tuple} tuple_type
     |
-    {primitive} primitive_literal_cs;
+    {primitive} primitive_literal_exp_cs;
     
   enum_literal =
     simple_name_cs path_name;
