@@ -101,9 +101,17 @@ Tokens
   k_body = 'body';
   k_derive = 'derive';
  
-  // literals
+  // Literal Expression
+  // 9.3.18
   boolean_literal = 'true' | 'false';
-  number_literal = digit+ number_fraction?;
+  
+  // 9.3.15
+  integer_literal = digit+;
+  
+  // 9.3.16
+  real_literal = digit+ number_fraction;
+  
+  // 9.3.17
   string_literal = '"' (idletter_with_digit_or_space)* '"';
  
   // identifier
@@ -216,29 +224,6 @@ Productions
    
   primary_expression =
     [let]:let_exp_cs? expression;
-  
-  // 9.3.35
-  let_exp_cs = 
-    k_let variable_declaration_cs let_exp_sub_cs;
-  
-  // 9.3.36
-  let_exp_sub_cs = 
-    {let_expr} comma variable_declaration_cs let_exp_sub_cs
-    |
-    k_in;
-    
-  // 9.3.27
-  variable_declaration_list_cs =
-    {one} variable_declaration_cs
-    |
-    {many} variable_declaration_cs comma variable_declaration_list_cs;
-    
-  // 9.3.23
-  variable_declaration_cs =
-    simple_name_cs type_postfix? variable_declaration_equation?;
-    
-  variable_declaration_equation =
-    equal expression;
    
   def_expression =
     {variable} variable_decl_cs equal primary_expression 
@@ -250,10 +235,6 @@ Productions
  
   type_postfix =
     colon type_cs;
-    
-  // 9.3.40
-  if_expression =
-    k_if [condition]:expression k_then [then_branch]:expression k_else [else_branch]:expression k_endif;
  
   expression =
     logical_expression;
@@ -301,49 +282,11 @@ Productions
 
   postfix_expression =
     ocl_expression property_invocation*;
-
-  // 9.3.2
-  ocl_expression =
-    {collection} collection_literal_exp_cs
-    |
-    {literal} literal_exp_cs
-    |
-    {variable} variable_exp_cs
-    |
-    {property_call} property_call
-    |
-    {parenthesed} l_par expression r_par
-    |
-    {message} ocl_message_exp_cs
-    |
-    {if} if_expression;
    
   property_invocation =
     {object} dot property_call
     |
     {collection} arrow property_call;
- 
-  // 9.3.33
-  is_marked_pre = at k_pre;
-  
-  // 9.3.37
-  ocl_message_exp_cs =
-    {d} ocl_expression droof simple_name_cs l_par ocl_message_arguments_cs? r_par
-    |
-    ocl_expression roof simple_name_cs l_par ocl_message_arguments_cs? r_par;
-
-  // 9.3.38
-  ocl_message_arguments_cs =
-    ocl_message_arg_cs next_ocl_message_arguments_cs?;
-    
-  next_ocl_message_arguments_cs =
-    comma ocl_message_arguments_cs;
-  
-  // 9.3.39  
-  ocl_message_arg_cs =
-    {qmark} qmark return_type?
-    |
-    ocl_expression;
 
   logical_operator =
     boolean_operator 
@@ -390,22 +333,22 @@ Productions
     {minus} minus 
     |
     {not} not;
-
-  // 9.3.24
-  type_cs =
-    {ocl_any} path_name_cs 
-    |
-    {coll} [collection]:collection_type_cs
-    |
-    {tupl} [tuple]:tuple_type_cs;
     
-  // 9.3.25
-  collection_type_cs = 
-    collection_type_identifier_cs l_par type_cs r_par;
-    
-  // 9.3.26
-  tuple_type_cs =
-    k_tuple l_par variable_declaration_list_cs? r_par;
+  // 9.3.2
+  ocl_expression =
+    {collection} collection_literal_exp_cs
+    |
+    {literal} literal_exp_cs
+    |
+    {variable} variable_exp_cs
+    |
+    {property_call} property_call
+    |
+    {parenthesed} l_par expression r_par
+    |
+    {message} ocl_message_exp_cs
+    |
+    {if} if_expression;
     
   // 9.3.3
   variable_exp_cs =
@@ -471,7 +414,9 @@ Productions
  
   // 9.3.13  
   primitive_literal_exp_cs =
-    {number} number_literal
+    {integer} integer_literal
+    |
+    {real} real_literal
     |
     {string} string_literal
     |
@@ -483,4 +428,69 @@ Productions
   // 9.3.14
   tuple_literal_exp_cs = 
     k_tuple l_brace variable_declaration_list_cs r_brace;
+    
+  // 9.3.23
+  variable_declaration_cs =
+    simple_name_cs type_postfix? variable_declaration_equation?;
+  
+  variable_declaration_equation =
+    equal expression;
+    
+  // 9.3.24
+  type_cs =
+    {ocl_any} path_name_cs 
+    |
+    {coll} [collection]:collection_type_cs
+    |
+    {tupl} [tuple]:tuple_type_cs;
+  
+  // 9.3.25
+  collection_type_cs = 
+    collection_type_identifier_cs l_par type_cs r_par;
+  
+  // 9.3.26
+  tuple_type_cs =
+    k_tuple l_par variable_declaration_list_cs? r_par;
+    
+  // 9.3.27
+  variable_declaration_list_cs =
+    {one} variable_declaration_cs
+    |
+    {many} variable_declaration_cs comma variable_declaration_list_cs;
+    
+  // 9.3.33
+  is_marked_pre = at k_pre;
+  
+  // 9.3.35
+  let_exp_cs = 
+    k_let variable_declaration_cs let_exp_sub_cs;
+  
+  // 9.3.36
+  let_exp_sub_cs = 
+    {let_expr} comma variable_declaration_cs let_exp_sub_cs
+    |
+    k_in;
+  
+  // 9.3.37
+  ocl_message_exp_cs =
+    {d} ocl_expression droof simple_name_cs l_par ocl_message_arguments_cs? r_par
+    |
+    ocl_expression roof simple_name_cs l_par ocl_message_arguments_cs? r_par;
+  
+  // 9.3.38
+  ocl_message_arguments_cs =
+    ocl_message_arg_cs next_ocl_message_arguments_cs?;
+  
+  next_ocl_message_arguments_cs =
+    comma ocl_message_arguments_cs;
+  
+  // 9.3.39  
+  ocl_message_arg_cs =
+    {qmark} qmark return_type?
+    |
+    ocl_expression;
+    
+  // 9.3.40
+  if_expression =
+    k_if [condition]:expression k_then [then_branch]:expression k_else [else_branch]:expression k_endif;
  
