@@ -424,25 +424,29 @@ Productions
   // 9.3.14
   tuple_literal_exp_cs = 
     k_tuple l_brace variable_declaration_list_cs r_brace;
-   
+    
+  // 9.3.4
+  simple_name_cs =
+    id;
+    
+  // 9.3.5
+  path_name_cs =
+    simple_name_cs path_name?;
+  
+  path_name =
+    dcolon path_name_cs;
+  
+  // 9.3.6
   literal_exp_cs =
     {enumeration} enum_literal
     |
     {coll} collection_literal_exp_cs
-    //|
-    //tuple_literal_exp_cs
+    |
+    tuple_literal_exp_cs
     |
     {primitive} primitive_literal_exp_cs;
-    
+  
+  // 9.3.7
   enum_literal =
     simple_name_cs path_name;
-  
-  path_name_cs =
-    simple_name_cs path_name?;
- 
-  path_name =
-    dcolon path_name_cs;
- 
-  simple_name_cs =
-    id;
   
