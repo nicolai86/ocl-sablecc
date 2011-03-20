@@ -101,7 +101,7 @@ Tokens
   // literals
   boolean_literal = 'true' | 'false';
   number_literal = digit+ number_fraction?;
-  string_literal = ''' (idletter_with_digit_or_space)* ''';
+  string_literal = '"' (idletter_with_digit_or_space)* '"';
  
   // identifier
   id      = idletter_or_digit+;
