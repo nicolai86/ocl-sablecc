@@ -307,7 +307,7 @@ Productions
   primary_expression =
     {collection} literal_collection
     |
-    {literal} literal
+    {literal} literal_exp_cs
     |
     {property_call} property_call
     |
@@ -399,7 +399,7 @@ Productions
     |
     {null} k_null;
    
-  literal =
+  literal_exp_cs =
     {enumeration} enum_literal
     |
     {collection} collection_type
