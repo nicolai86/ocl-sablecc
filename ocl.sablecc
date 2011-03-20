@@ -55,6 +55,9 @@ Tokens
   at = '@';
   bar = '|';
   ddot = '..';
+  roof = '^';
+  droof = '^^';
+  qmark = '?';
  
   // operators
   not = 'not';
@@ -247,7 +250,8 @@ Productions
  
   type_postfix =
     colon type_cs;
- 
+    
+  // 9.3.40
   if_expression =
     k_if [condition]:expression k_then [then_branch]:expression k_else [else_branch]:expression k_endif;
  
@@ -298,6 +302,7 @@ Productions
   postfix_expression =
     ocl_expression property_invocation*;
 
+  // 9.3.2
   ocl_expression =
     {collection} collection_literal_exp_cs
     |
@@ -309,6 +314,8 @@ Productions
     |
     {parenthesed} l_par expression r_par
     |
+    {message} ocl_message_exp_cs
+    |
     {if} if_expression;
    
   property_invocation =
@@ -316,7 +323,27 @@ Productions
     |
     {collection} arrow property_call;
  
+  // 9.3.33
   is_marked_pre = at k_pre;
+  
+  // 9.3.37
+  ocl_message_exp_cs =
+    {d} ocl_expression droof simple_name_cs l_par ocl_message_arguments_cs? r_par
+    |
+    ocl_expression roof simple_name_cs l_par ocl_message_arguments_cs? r_par;
+
+  // 9.3.38
+  ocl_message_arguments_cs =
+    ocl_message_arg_cs next_ocl_message_arguments_cs?;
+    
+  next_ocl_message_arguments_cs =
+    comma ocl_message_arguments_cs;
+  
+  // 9.3.39  
+  ocl_message_arg_cs =
+    {qmark} qmark return_type?
+    |
+    ocl_expression;
 
   logical_operator =
     boolean_operator 
@@ -450,6 +477,7 @@ Productions
     |
     {boolean} boolean_literal
     |
+    // 9.3.41
     {null} k_null;
  
   // 9.3.14
