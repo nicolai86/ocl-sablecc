@@ -88,8 +88,8 @@ Tokens
   k_then = 'then';
   k_else = 'else';
   k_endif = 'endif';
-  let = 'let';
-  in = 'in';
+  k_let = 'let';
+  k_in = 'in';
   k_pre = 'pre';
   k_post = 'post';
   k_inv = 'inv';
@@ -148,18 +148,18 @@ Productions
     {derive} k_derive colon [derive]:ocl_expression;
    
   inv_def_cs = 
-    {constraint} k_inv simple_name? colon [invariant]:ocl_expression
+    {constraint} k_inv simple_name_cs? colon [invariant]:ocl_expression
     |
-    {definition} k_def simple_name? colon def_expression;
+    {definition} k_def simple_name_cs? colon def_expression;
    
   return_type =
     colon type_cs;
    
   classifier_type =
-    colon simple_name;
+    colon simple_name_cs;
    
   context_operation_name =
-    simple_name 
+    simple_name_cs 
     |
     {logical} logical_operator 
     |
@@ -173,13 +173,13 @@ Productions
     formal_parameter next_param*;
    
   formal_parameter =
-    simple_name type_postfix;
+    simple_name_cs type_postfix;
    
   next_param =
     comma formal_parameter;
    
   property_call =
-    simple_name is_marked_pre? qualifiers? [parameters]:property_call_parameters?;
+    simple_name_cs is_marked_pre? qualifiers? [parameters]:property_call_parameters?;
    
   property_call_parameters =
     l_par declarator? [parameters]:actual_parameter_list? r_par;
@@ -203,19 +203,19 @@ Productions
     expression range?;
    
   range =
-    colon expression;
+    ddot expression;
    
   declarator =
     {concrete} actual_parameter_list simple_type_postfix? accumulator? bar;
    
   accumulator =
-    semicolon simple_name colon type_cs equal expression;
+    semicolon simple_name_cs colon type_cs equal expression;
    
   name_list =
-    simple_name next_name*;
+    simple_name_cs next_name*;
  
   next_name =
-    comma simple_name;
+    comma simple_name_cs;
  
   simple_type_postfix =
     colon path_name_cs;
@@ -227,7 +227,7 @@ Productions
     [let]:let_declaration? expression;
   
   let_declaration = 
-    let let_expression in;
+    k_let let_expression k_in;
   
   let_expression =
     {one} [let]:let_sub_expression
@@ -235,7 +235,7 @@ Productions
     {many} [let]:let_sub_expression comma let_expression;
   
   let_sub_expression = 
-    simple_name let_parameter_list? type_postfix? equal [expr]:expression;
+    simple_name_cs let_parameter_list? type_postfix? equal [expr]:expression;
   
   let_parameter_list = 
     l_par formal_parameter_list r_par;
@@ -249,7 +249,7 @@ Productions
     {operation} property_call equal ocl_expression;
  
   variable_decl_cs =
-    simple_name return_type?;
+    simple_name_cs return_type?;
  
   type_postfix =
     colon type_cs;
@@ -409,14 +409,14 @@ Productions
     {primitive} prim_literal;
     
   enum_literal =
-    simple_name path_name;
+    simple_name_cs path_name;
   
   path_name_cs =
-    simple_name path_name?;
+    simple_name_cs path_name?;
  
   path_name =
     dcolon path_name_cs;
  
-  simple_name =
+  simple_name_cs =
     id;
   
