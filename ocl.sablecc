@@ -390,7 +390,7 @@ Productions
   tuple_type = 
     k_tuple l_brace property_call_parameters r_brace;
    
-  prim_literal =
+  primitive_literal_cs =
     {number} number_literal
     |
     {string} string_literal
@@ -406,7 +406,7 @@ Productions
     |
     {tuple} tuple_type
     |
-    {primitive} prim_literal;
+    {primitive} primitive_literal_cs;
     
   enum_literal =
     simple_name_cs path_name;
