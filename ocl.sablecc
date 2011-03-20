@@ -136,19 +136,19 @@ Productions
     context [context_name]:path_name_cs property_call_parameters? return_type? pre_post_body_cs+;
      
   pre_post_body_cs =
-    {pre_condition} k_pre colon [pre]:ocl_expression
+    {pre_condition} k_pre colon [pre]:primary_expression
     |
-    {post_condition} k_post colon [post]:ocl_expression
+    {post_condition} k_post colon [post]:primary_expression
     |
-    {body_condition} k_body colon [body]:ocl_expression;
+    {body_condition} k_body colon [body]:primary_expression;
    
   init_derive_cs =
-    {initial} k_init colon [init]:ocl_expression
+    {initial} k_init colon [init]:primary_expression
     |
-    {derive} k_derive colon [derive]:ocl_expression;
+    {derive} k_derive colon [derive]:primary_expression;
    
   inv_def_cs = 
-    {constraint} k_inv simple_name_cs? colon [invariant]:ocl_expression
+    {constraint} k_inv simple_name_cs? colon [invariant]:primary_expression
     |
     {definition} k_def simple_name_cs? colon def_expression;
    
@@ -211,7 +211,7 @@ Productions
   qualifiers =
     l_bracket actual_parameter_list r_bracket;
    
-  ocl_expression =
+  primary_expression =
     [let]:let_exp_cs? expression;
   
   // 9.3.35
@@ -238,9 +238,9 @@ Productions
     equal expression;
    
   def_expression =
-    {variable} variable_decl_cs equal ocl_expression 
+    {variable} variable_decl_cs equal primary_expression 
     |
-    {operation} property_call equal ocl_expression;
+    {operation} property_call equal primary_expression;
  
   variable_decl_cs =
     simple_name_cs return_type?;
@@ -296,9 +296,9 @@ Productions
     [expression]:postfix_expression;
 
   postfix_expression =
-    primary_expression property_invocation*;
+    ocl_expression property_invocation*;
 
-  primary_expression =
+  ocl_expression =
     {collection} collection_literal_exp_cs
     |
     {literal} literal_exp_cs
