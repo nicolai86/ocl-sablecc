@@ -168,15 +168,6 @@ Productions
     {add} add_operator 
     |
     {multiply} multiply_operator;
- 
-  param_list =
-    formal_parameter next_param*;
-   
-  formal_parameter =
-    simple_name_cs type_postfix;
-   
-  next_param =
-    comma formal_parameter;
    
   property_call =
     simple_name_cs is_marked_pre? qualifiers? [parameters]:property_call_parameters?;
@@ -191,7 +182,7 @@ Productions
     comma expression;
    
   literal_collection =
-    collection_kind l_brace collection_item_list? r_brace;
+    collection_type_identifier_cs l_brace collection_item_list? r_brace;
    
   collection_item_list =
     collection_item next_collection_item*;
@@ -248,12 +239,6 @@ Productions
     
   variable_declaration_equation =
     equal expression;
-  
-  let_parameter_list = 
-    l_par formal_parameter_list r_par;
-    
-  formal_parameter_list = 
-      param_list?;
    
   def_expression =
     {variable} variable_decl_cs equal ocl_expression 
@@ -380,15 +365,28 @@ Productions
     |
     {not} not;
 
+  // 9.3.24
   type_cs =
     {ocl_any} path_name_cs 
     |
-    {collection} [collection]:collection_literal_exp_cs;
+    {coll} [collection]:collection_type_cs
+    |
+    {tupl} [tuple]:tuple_type_cs;
+    
+  // 9.3.25
+  collection_type_cs = 
+    collection_type_identifier_cs l_par type_cs r_par;
+    
+  // 9.3.26
+  tuple_type_cs =
+    k_tuple l_par variable_declaration_list_cs? r_par;
    
+  // 9.3.8
   collection_literal_exp_cs =
-    collection_kind l_par path_name_cs r_par;
+    collection_type_identifier_cs l_brace collection_literal_parts_cs? r_brace;
    
-  collection_kind =
+  // 9.3.9
+  collection_type_identifier_cs =
     {set} k_set
     |
     {ordered_set} k_ordered_set
@@ -399,9 +397,24 @@ Productions
     |
     k_collection;
     
-  tuple_literal_exp_cs = 
-    k_tuple l_brace property_call_parameters r_brace;
-   
+  // 9.3.10
+  collection_literal_parts_cs =
+    [collection_part]:collection_literal_part_cs next_collection_literal_part_cs?;
+    
+  next_collection_literal_part_cs =
+    comma [collection_part]:collection_literal_part_cs;
+    
+  // 9.3.11
+  collection_literal_part_cs = 
+    {range} collection_range_cs
+    |
+    expression;
+  
+  // 9.3.12  
+  collection_range_cs =
+    [l_expr]:expression comma [r_expr]:expression;
+  
+  // 9.3.13  
   primitive_literal_exp_cs =
     {number} number_literal
     |
@@ -410,6 +423,10 @@ Productions
     {boolean} boolean_literal
     |
     {null} k_null;
+    
+  // 9.3.14
+  tuple_literal_exp_cs = 
+    k_tuple l_brace variable_declaration_list_cs r_brace;
    
   literal_exp_cs =
     {enumeration} enum_literal
